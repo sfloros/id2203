@@ -2,7 +2,7 @@ name := "project18"
 organization in ThisBuild := "se.kth.id2203"
 version in ThisBuild := "1.0-SNAPSHOT"
 scalaVersion in ThisBuild := "2.12.4"
-
+updateOptions := updateOptions.value.withCachedResolution(false)
 // PROJECTS
 
 lazy val global = project

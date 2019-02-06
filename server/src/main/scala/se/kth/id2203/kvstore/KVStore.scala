@@ -41,5 +41,9 @@ class KVService extends ComponentDefinition {
       log.info("Got operation {}! Now implement me please :)", op);
       trigger(NetMessage(self, header.src, op.response(OpCode.NotImplemented)) -> net);
     }
+    case NetMessage(header, op: Put) => handle {
+      log.info("Got operation {}! Now implement properly me please :)", op);
+      trigger(NetMessage(self, header.src, op.response(OpCode.NotImplemented)) -> net);
+    }
   }
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="client/src/main/java"/>
+	<classpathentry kind="lib" path="client/target/scala-2.12/client.jar"/>
+	<classpathentry kind="lib" path="server/target/scala-2.12/server.jar"/>
+	<classpathentry kind="output" path="client/target/scala-2.12/classes"/>
+</classpath>
