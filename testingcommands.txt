@@ -1,0 +1,24 @@
+ASK LARS: Do we need to tolerate the bootstrap server crashing? 
+	2: Fault tolerance δ means we need to replicate the data to δ nodes.
+		BUT (n, n)-writers means we can only tolerate δ/2 crashes to guarantee liveness. Does that mean we need partition size to be 2*δ to tolerate δ failure?  
+	3: Reconfigurable leases -> What does it mean?
+
+Compile/Build:
+sbt
+compile
+test
+server/assembly
+client/assembly
+
+
+Bootstrap:
+java -jar server/target/scala-2.12/server.jar -p 45678
+
+1st server:
+java -jar server/target/scala-2.12/server.jar -p 45679 -s localhost:45678
+
+2nd server:
+java -jar server/target/scala-2.12/server.jar -p 45670 -s localhost:45678
+
+Client:
+java -jar client/target/scala-2.12/client.jar -p 56787 -s localhost:45678

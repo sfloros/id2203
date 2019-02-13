@@ -29,7 +29,7 @@ import se.sics.kompics.sl._;
 import se.sics.kompics.network.Network;
 
 class KVService extends ComponentDefinition {
-
+  // TODO: Add interaction with NNAR in this class with triggers and handlers to and from it.
   //******* Ports ******
   val net = requires[Network];
   val route = requires(Routing);

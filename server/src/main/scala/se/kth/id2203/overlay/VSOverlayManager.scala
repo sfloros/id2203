@@ -55,7 +55,7 @@ class VSOverlayManager extends ComponentDefinition {
     case GetInitialAssignments(nodes) => handle {
       log.info("Generating LookupTable...");
       val lut = LookupTable.generate(nodes);
-      logger.debug("Generated assignments:\n$lut");
+      logger.debug(s"Generated assignments:\n$lut");
       trigger (new InitialAssignments(lut) -> boot);
     }
     case Booted(assignment: LookupTable) => handle {
@@ -76,7 +76,7 @@ class VSOverlayManager extends ComponentDefinition {
     case NetMessage(header, msg: Connect) => handle {
       lut match {
         case Some(l) => {
-          log.debug("Accepting connection request from ${header.src}");
+          log.debug(s"Accepting connection request from ${header.src}");
           val size = l.getNodes().size;
           trigger (NetMessage(self, header.src, msg.ack(size)) -> net);
         }
