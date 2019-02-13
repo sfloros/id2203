@@ -42,16 +42,23 @@ class KVService extends ComponentDefinition {
       trigger(NetMessage(self, header.src, op.response(OpCode.NotImplemented)) -> net);
     }
     case NetMessage(header, put: Put) => handle {
-      log.info("Got operation {}! PUT :)", put);
-      trigger(NetMessage(self, header.src, op.response(OpCode.NotImplemented)) -> net);
+      val key = put.key;
+      val value = put.value;
+      log.info(s"Got operation {}! PUT $key, $value", put);
+
+      trigger(NetMessage(self, header.src, put.response(OpCode.NotImplemented)) -> net);
     }
     case NetMessage(header, get: Get) => handle {
-      log.info("Got operation {}! GET :)", get);
-      trigger(NetMessage(self, header.src, op.response(OpCode.NotImplemented)) -> net);
+      val key = get.key;
+      log.info("Got operation {}! GET $key", get);
+      trigger(NetMessage(self, header.src, get.response(OpCode.NotImplemented)) -> net);
     }
     case NetMessage(header, cas: Cas) => handle {
-      log.info("Got operation {}! CAS :)", cas);
-      trigger(NetMessage(self, header.src, op.response(OpCode.NotImplemented)) -> net);
+      val key = cas.key;
+      val referenceValue = cas.referenceValue;
+      val value = cas.value;
+      log.info("Got operation {}! CAS $key $referenceValue $value", cas);
+      trigger(NetMessage(self, header.src, cas.response(OpCode.NotImplemented)) -> net);
     }
   }
 }

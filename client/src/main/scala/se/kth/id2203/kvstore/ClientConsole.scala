@@ -55,7 +55,7 @@ class ClientConsole(val service: ClientService) extends CommandConsole with Pars
       case e: Throwable => logger.error("Error during op.", e);
     }
   };
-  val putCommand = parsed(P("put" ~ " " ~ simpleStr), usage = "put <key>", descr = "Executes a put for <key> - <value>.") { (key, value) =>
+  val putCommand = parsed(P("put" ~ " " ~ simpleStr ~ " " ~ simpleStr), usage = "put <key> <value>", descr = "Executes a put for <key> - <value>.") { case (key, value) =>
     println(s"Put with ($key, $value)");
 
     val fr = service.put(key,value);
@@ -81,7 +81,7 @@ class ClientConsole(val service: ClientService) extends CommandConsole with Pars
     }
   };
 
-  val casCommand = parsed(P("cas" ~ " " ~ simpleStr), usage = "cas(<key>, <referenceValue>, <value>)", descr = "Executes a cas for <key> - <referenceValue> - <value>.") { (key, referenceValue, value) =>
+  val casCommand = parsed(P("cas" ~ " " ~ simpleStr ~ " " ~ simpleStr ~ " " ~ simpleStr), usage = "cas <key> <referenceValue> <value>", descr = "Executes a cas for <key> - <referenceValue> - <value>.") { case (key, referenceValue, value) =>
     println(s"cas with ($key, $referenceValue, $value)");
 
     val fr = service.cas(key, referenceValue, value);
