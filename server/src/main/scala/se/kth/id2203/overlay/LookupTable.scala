@@ -59,6 +59,7 @@ class LookupTable extends NodeAssignment with Serializable {
 object LookupTable {
   def generate(nodes: Set[NetAddress]): LookupTable = {
     val lut = new LookupTable();
+    // // TODO: reassign nodes to partitions in case of crash
     lut.partitions ++= (0 -> nodes);
     lut
   }

@@ -55,16 +55,42 @@ class ClientConsole(val service: ClientService) extends CommandConsole with Pars
       case e: Throwable => logger.error("Error during op.", e);
     }
   };
-  val putCommand = parsed(P("put" ~ " " ~ simpleStr), usage = "put <key>", descr = "Executes an put for <key>.") { key =>
-    println(s"Put with $key");
+  val putCommand = parsed(P("put" ~ " " ~ simpleStr), usage = "put <key>", descr = "Executes a put for <key> - <value>.") { (key, value) =>
+    println(s"Put with ($key, $value)");
 
-    val fr = service.put(key);
-    out.println("Operation sent! Awaiting response...");
+    val fr = service.put(key,value);
+    out.println("Put sent! Awaiting response...");
     try {
       val r = Await.result(fr, 5.seconds);
-      out.println("Operation complete! Response was: " + r.status);
+      out.println(s"Put ($key, $value) operation complete! Response was: " + r.status);
     } catch {
-      case e: Throwable => logger.error("Error during op.", e);
+      case e: Throwable => logger.error(s"Error during put ($key, $value).", e);
+    }
+  };
+
+  val getCommand = parsed(P("get" ~ " " ~ simpleStr), usage = "get <key>", descr = "Executes a get for <key> and returns <value>.") { key =>
+    println(s"Get with $key");
+
+    val fr = service.get(key);
+    out.println("Get sent! Awaiting response...");
+    try {
+      val r = Await.result(fr, 5.seconds);
+      out.println(s"Get $key operation complete! Response was: " + r.status);
+    } catch {
+      case e: Throwable => logger.error(s"Error during get $key.", e);
+    }
+  };
+
+  val casCommand = parsed(P("cas" ~ " " ~ simpleStr), usage = "cas(<key>, <referenceValue>, <value>)", descr = "Executes a cas for <key> - <referenceValue> - <value>.") { (key, referenceValue, value) =>
+    println(s"cas with ($key, $referenceValue, $value)");
+
+    val fr = service.cas(key, referenceValue, value);
+    out.println("cas sent! Awaiting response...");
+    try {
+      val r = Await.result(fr, 5.seconds);
+      out.println(s"cas ($key, $referenceValue, $value) operation complete! Response was: " + r.status);
+    } catch {
+      case e: Throwable => logger.error(s"Error during cas ($key, $referenceValue, $value).", e);
     }
   };
 }
