@@ -49,12 +49,13 @@ class VSOverlayManager extends ComponentDefinition {
   val timer = requires[Timer];
   //******* Fields ******
   val self = cfg.getValue[NetAddress]("id2203.project.address");
+  val delta = cfg.getValue[Int]("id2203.project.delta");
   private var lut: Option[LookupTable] = None;
   //******* Handlers ******
   boot uponEvent {
     case GetInitialAssignments(nodes) => handle {
-      log.info("Generating LookupTable...");
-      val lut = LookupTable.generate(nodes);
+      log.info(s"Generating LookupTable... delta: $delta");
+      val lut = LookupTable.generate(nodes, delta);
       logger.debug(s"Generated assignments:\n$lut");
       trigger (new InitialAssignments(lut) -> boot);
     }
