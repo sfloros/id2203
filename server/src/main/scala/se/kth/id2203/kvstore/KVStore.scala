@@ -33,8 +33,12 @@ class KVService extends ComponentDefinition {
   //******* Ports ******
   val net = requires[Network];
   val route = requires(Routing);
+  // Store NNAR here
+
   //******* Fields ******
   val self = cfg.getValue[NetAddress]("id2203.project.address");
+  // May need data structure to keep track of operations sent to NNAR without response yet.
+
   //******* Handlers ******
   net uponEvent {
     case NetMessage(header, op: Op) => handle {
@@ -45,13 +49,14 @@ class KVService extends ComponentDefinition {
       val key = put.key;
       val value = put.value;
       log.info(s"Got operation {}! PUT $key, $value", put);
-
-      trigger(NetMessage(self, header.src, put.response(OpCode.NotImplemented)) -> net);
+      // Trigger NNAR write here
+      trigger(NetMessage(self, header.src, put.response(OpCode.NotImplemented)) -> net); // Move this reply to NNAR Event handler
     }
     case NetMessage(header, get: Get) => handle {
       val key = get.key;
       log.info("Got operation {}! GET $key", get);
-      trigger(NetMessage(self, header.src, get.response(OpCode.NotImplemented)) -> net);
+      // Trigger NNAR read here
+      trigger(NetMessage(self, header.src, get.response(OpCode.NotImplemented)) -> net); // Move this reply to NNAR Event handler
     }
     case NetMessage(header, cas: Cas) => handle {
       val key = cas.key;
@@ -61,4 +66,7 @@ class KVService extends ComponentDefinition {
       trigger(NetMessage(self, header.src, cas.response(OpCode.NotImplemented)) -> net);
     }
   }
+  // Insert NNAR Event handler here
+
+
 }

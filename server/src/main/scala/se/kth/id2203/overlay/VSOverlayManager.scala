@@ -58,6 +58,14 @@ class VSOverlayManager extends ComponentDefinition {
       val lut = LookupTable.generate(nodes, delta);
       logger.debug(s"Generated assignments:\n$lut");
       trigger (new InitialAssignments(lut) -> boot);
+
+      // Initialize NNAR here
+
+      // Initialize BEB here
+
+      // Connect NNAR and BEB here
+
+      
     }
     case Booted(assignment: LookupTable) => handle {
       log.info("Got NodeAssignment, overlay ready.");
