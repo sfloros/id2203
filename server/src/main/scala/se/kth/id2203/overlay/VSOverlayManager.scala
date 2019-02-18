@@ -29,6 +29,10 @@ import se.sics.kompics.sl._;
 import se.sics.kompics.network.Network;
 import se.sics.kompics.timer.Timer;
 import util.Random;
+import se.kth.edx.id2203.core.Ports._
+import se.kth.edx.id2203.core.ExercisePrimitives._
+import se.sics.kompics.{ComponentDefinition => _, Port => _,KompicsEvent}
+
 
 /**
  * The V(ery)S(imple)OverlayManager.
@@ -47,6 +51,10 @@ class VSOverlayManager extends ComponentDefinition {
   val boot = requires(Bootstrapping);
   val net = requires[Network];
   val timer = requires[Timer];
+  // New stuff:
+  val nnar =  provides(AtomicRegister);
+  val beb = provides(BestEffortBroadcast);
+  
   //******* Fields ******
   val self = cfg.getValue[NetAddress]("id2203.project.address");
   val delta = cfg.getValue[Int]("id2203.project.delta");
@@ -59,13 +67,15 @@ class VSOverlayManager extends ComponentDefinition {
       logger.debug(s"Generated assignments:\n$lut");
       trigger (new InitialAssignments(lut) -> boot);
 
-      // Initialize NNAR here
-
-      // Initialize BEB here
-
+      // Initialize NNAR here 
+      val nnar = create(classOf[ReadImposeWriteConsultMajority], Init[AtomicRegister](self, lut.lookup(self).size));
+      // BEB here
+      val beb = create(classOf[BasicBroadcast], Init[BasicBroadcast](self, lut.lookup(self)));
       // Connect NNAR and BEB here
+      connect[AtomicRegister](nnar -> beb);
+      connect[AtomicRegister](nnar -> net);
+      connect[BasicBroadcast](beb -> net);
 
-      
     }
     case Booted(assignment: LookupTable) => handle {
       log.info("Got NodeAssignment, overlay ready.");

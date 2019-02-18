@@ -27,11 +27,11 @@ import com.larskroll.common.collections._;
 import java.util.Collection;
 import se.kth.id2203.bootstrapping.NodeAssignment;
 import se.kth.id2203.networking.NetAddress;
-
 @SerialVersionUID(0x57bdfad1eceeeaaeL)
 class LookupTable extends NodeAssignment with Serializable {
 
   val partitions = TreeSetMultiMap.empty[Int, NetAddress];
+  //val partitions = new HashMap[Int, Set[NetAddress]] with MultiMap[Int, NetAddress];
 
   def lookup(key: String): Iterable[NetAddress] = {
     val keyHash = key.hashCode();
@@ -40,6 +40,18 @@ class LookupTable extends NodeAssignment with Serializable {
       case None    => partitions.lastKey
     }
     return partitions(partition);
+  }
+
+  def lookup(v: NetAddress): Set[NetAddress] = {
+    var accum = Set.empty[NetAddress]
+    partitions.foldLeft(accum) {
+      case (acc, kv) => {
+        var x = kv._2.toSet;
+        if(x.contains(v)) acc ++ kv._2;
+        else acc;
+      }
+    }
+    accum
   }
 
   def getNodes(): Set[NetAddress] = partitions.foldLeft(Set.empty[NetAddress]) {

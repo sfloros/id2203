@@ -27,14 +27,15 @@ import se.kth.id2203.networking._;
 import se.kth.id2203.overlay.Routing;
 import se.sics.kompics.sl._;
 import se.sics.kompics.network.Network;
+import se.kth.edx.id2203.core.Ports._
+
 
 class KVService extends ComponentDefinition {
   // TODO: Add interaction with NNAR in this class with triggers and handlers to and from it.
   //******* Ports ******
   val net = requires[Network];
   val route = requires(Routing);
-  // Store NNAR here
-
+  val nnar = requires[AtomicRegister];
   //******* Fields ******
   val self = cfg.getValue[NetAddress]("id2203.project.address");
   // May need data structure to keep track of operations sent to NNAR without response yet.
