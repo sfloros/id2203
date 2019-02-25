@@ -25,13 +25,15 @@ package se.kth.id2203.overlay;
 
 import se.kth.id2203.bootstrapping._;
 import se.kth.id2203.networking._;
+import se.kth.id2203.broadcast._;
 import se.sics.kompics.sl._;
 import se.sics.kompics.network.Network;
 import se.sics.kompics.timer.Timer;
 import util.Random;
-import se.kth.edx.id2203.core.Ports._
 import se.kth.edx.id2203.core.ExercisePrimitives._
 import se.sics.kompics.{ComponentDefinition => _, Port => _,KompicsEvent}
+
+import scala.collection.mutable.Set
 
 
 /**
@@ -52,34 +54,44 @@ class VSOverlayManager extends ComponentDefinition {
   val net = requires[Network];
   val timer = requires[Timer];
   // New stuff:
-  val nnar =  provides(AtomicRegister);
-  val beb = provides(BestEffortBroadcast);
-  
+  //val nnar =  provides(AtomicRegister);
+  val beb = requires[BestEffortBroadcast];
+
   //******* Fields ******
   val self = cfg.getValue[NetAddress]("id2203.project.address");
   val delta = cfg.getValue[Int]("id2203.project.delta");
   private var lut: Option[LookupTable] = None;
   //******* Handlers ******
+
+  beb uponEvent {
+    case BEB_Deliver(src, payload) => handle {
+      log.info("Broadcast was sent");
+    }
+  }
+
   boot uponEvent {
     case GetInitialAssignments(nodes) => handle {
       log.info(s"Generating LookupTable... delta: $delta");
-      val lut = LookupTable.generate(nodes, delta);
+      var (lut, standby) = LookupTable.generate(nodes, delta);
       logger.debug(s"Generated assignments:\n$lut");
-      trigger (new InitialAssignments(lut) -> boot);
+      trigger (new InitialAssignments(lut, standby) -> boot);
 
-      // Initialize NNAR here 
-      val nnar = create(classOf[ReadImposeWriteConsultMajority], Init[AtomicRegister](self, lut.lookup(self).size));
-      // BEB here
-      val beb = create(classOf[BasicBroadcast], Init[BasicBroadcast](self, lut.lookup(self)));
-      // Connect NNAR and BEB here
-      connect[AtomicRegister](nnar -> beb);
-      connect[AtomicRegister](nnar -> net);
-      connect[BasicBroadcast](beb -> net);
+        // BEB here
+       //  val beb = create(classOf[BasicBroadcast], Init[BasicBroadcast](self, lut.lookup(self)));
+      //   Connect NNAR and BEB here
+     //    connect[BasicBroadcast](beb -> net);
 
     }
     case Booted(assignment: LookupTable) => handle {
       log.info("Got NodeAssignment, overlay ready.");
       lut = Some(assignment);
+
+      // BEB Broadcast for the lookup of nodes, what argument to use here
+      trigger(Set_Topology(assignment.lookup(self)) -> beb);
+
+      // Start the EPFD here
+
+      // Start SC here
     }
   }
 

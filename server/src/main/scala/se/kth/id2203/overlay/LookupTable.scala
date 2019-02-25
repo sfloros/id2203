@@ -27,6 +27,8 @@ import com.larskroll.common.collections._;
 import java.util.Collection;
 import se.kth.id2203.bootstrapping.NodeAssignment;
 import se.kth.id2203.networking.NetAddress;
+
+
 @SerialVersionUID(0x57bdfad1eceeeaaeL)
 class LookupTable extends NodeAssignment with Serializable {
 
@@ -69,19 +71,21 @@ class LookupTable extends NodeAssignment with Serializable {
 }
 
 object LookupTable {
-  def generate(nodes: Set[NetAddress], delta: Int): LookupTable = {
+  def generate(nodes: Set[NetAddress], delta: Int): (LookupTable, Set[NetAddress]) = {
     val lut = new LookupTable();
     // Create delta partitions
     var sliding = nodes.sliding(delta,delta).toArray
     var r = nodes.size/delta
-    var j = 0
+    var standby = Set[NetAddress]()
     for (i <- Range(0,sliding.size)) {
-      if (sliding(i).size<delta) j=1;
-      for(s<-sliding(i)){
-        lut.partitions += ((i-j)*(Int.MaxValue/r) -> s)
+      if (sliding(i).size<delta) standby ++= sliding(i);
+      else {
+        for(s<-sliding(i)){
+          lut.partitions += (i*(Int.MaxValue/r) -> s)
+        }
       }
     }
 //    lut.partitions ++= (0 -> nodes);
-    lut
+    (lut, standby)
   }
 }

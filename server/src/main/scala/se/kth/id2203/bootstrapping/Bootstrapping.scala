@@ -12,4 +12,4 @@ object Bootstrapping extends Port {
 
 case class GetInitialAssignments(nodes: Set[NetAddress]) extends KompicsEvent;
 case class Booted(assignment: NodeAssignment) extends KompicsEvent;
-case class InitialAssignments(assignment: NodeAssignment) extends KompicsEvent;
+case class InitialAssignments(assignment: NodeAssignment, standby: Set[NetAddress]) extends KompicsEvent;

@@ -26,6 +26,9 @@ package se.kth.id2203;
 import se.kth.id2203.bootstrapping._
 import se.kth.id2203.kvstore.KVService;
 import se.kth.id2203.networking.NetAddress;
+import se.kth.id2203.failuredetector.EPFD;
+import se.kth.edx.id2203.core.ExercisePrimitives;
+
 import se.kth.id2203.overlay._
 import se.sics.kompics.sl._
 import se.sics.kompics.Init;
@@ -38,12 +41,14 @@ class ParentComponent extends ComponentDefinition {
   val net = requires[Network];
   val timer = requires[Timer];
   //******* Children ******
+
   val overlay = create(classOf[VSOverlayManager], Init.NONE);
   val kv = create(classOf[KVService], Init.NONE);
   val boot = cfg.readValue[NetAddress]("id2203.project.bootstrap-address") match {
     case Some(_) => create(classOf[BootstrapClient], Init.NONE); // start in client mode
     case None    => create(classOf[BootstrapServer], Init.NONE); // start in server mode
   }
+  val epfd = create(classOf[EPFD], Init.NONE);
 
   {
     connect[Timer](timer -> boot);
@@ -54,5 +59,7 @@ class ParentComponent extends ComponentDefinition {
     // KV
     connect(Routing)(overlay -> kv);
     connect[Network](net -> kv);
+
+    connect(EPFD)(epfd -> boot);
   }
 }

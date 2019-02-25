@@ -31,6 +31,7 @@ import se.sics.kompics.network.Network;
 import se.sics.kompics.timer._;
 import collection.mutable;
 
+
 object BootstrapServer {
   sealed trait State;
   case object Collecting extends State;
@@ -46,6 +47,7 @@ class BootstrapServer extends ComponentDefinition {
   val boot = provides(Bootstrapping);
   val net = requires[Network];
   val timer = requires[Timer];
+  val epfd = requires[EPFD];
   //******* Fields ******
   val self = cfg.getValue[NetAddress]("id2203.project.address");
   val bootThreshold = cfg.getValue[Int]("id2203.project.bootThreshold");
@@ -54,6 +56,8 @@ class BootstrapServer extends ComponentDefinition {
   private val active = mutable.HashSet.empty[NetAddress];
   private val ready = mutable.HashSet.empty[NetAddress];
   private var initialAssignment: Option[NodeAssignment] = None;
+  private var standby = Set.empty[NetAddress];
+
   //******* Handlers ******
   ctrl uponEvent {
     case _: Start => handle {
@@ -100,7 +104,8 @@ class BootstrapServer extends ComponentDefinition {
   }
 
   boot uponEvent {
-    case InitialAssignments(assignment) => handle {
+    case InitialAssignments(assignment, s) => handle {
+      standby = s;
       initialAssignment = Some(assignment);
       log.info("Seeding assignments...");
       active foreach { node =>
@@ -113,6 +118,7 @@ class BootstrapServer extends ComponentDefinition {
   net uponEvent {
     case NetMessage(header, CheckIn) => handle {
       active += header.src;
+      //TODO add server to epfd
     }
     case NetMessage(header, Ready) => handle {
       ready += header.src;

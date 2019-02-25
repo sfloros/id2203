@@ -3,12 +3,20 @@ package se.kth.edx.id2203.core
 import java.net.{ InetAddress, InetSocketAddress }
 
 import se.kth.edx.id2203.core.ExercisePrimitives.PerfectP2PLink._
+import se.kth.id2203.networking.NetAddress
 import se.kth.edx.id2203.core.Ports._
 import se.sics.kompics.{ Init, KompicsEvent }
 import se.sics.kompics.network.{ Address, Network, Transport }
 import se.sics.kompics.sl.{ ComponentDefinition, _ }
 
+
+
+
 object ExercisePrimitives {
+
+  class epfdInit(self: NetAddress) extends Init;
+
+  case class Set_Topology(topology: Set[NetAddress]) extends KompicsEvent;
 
     object AddressUtils {
 
@@ -22,6 +30,7 @@ object ExercisePrimitives {
 
     }
 
+// Use it as the pLink in our project
     object PerfectP2PLink {
         case class PerfectLinkInit(selfAddr: Address) extends Init[PerfectP2PLink];
         case class PerfectLinkMessage(src: Address, dest: Address, payload: KompicsEvent) extends TMessage(THeader(src, dest, Transport.TCP));
