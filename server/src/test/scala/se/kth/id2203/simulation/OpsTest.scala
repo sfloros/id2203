@@ -123,7 +123,7 @@ object SimpleScenario {
 
     startCluster andThen
       10.seconds afterTermination startClients andThen
-      100.seconds afterTermination Terminate
+      10.seconds afterTermination Terminate
   }
 
 }

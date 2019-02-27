@@ -29,6 +29,8 @@ import se.sics.kompics.sl._;
 import se.sics.kompics.Start;
 import se.sics.kompics.network.Network;
 import se.sics.kompics.timer._;
+import se.kth.id2203.failuredetector._;
+
 
 object BootstrapClient {
   sealed trait State;
@@ -43,6 +45,7 @@ class BootstrapClient extends ComponentDefinition {
   val bootstrap = provides(Bootstrapping);
   val timer = requires[Timer];
   val net = requires[Network];
+  val epfd = requires[EventuallyPerfectFailureDetector];
   //******* Fields ******
   val self = cfg.getValue[NetAddress]("id2203.project.address");
   val server = cfg.getValue[NetAddress]("id2203.project.bootstrap-address");
