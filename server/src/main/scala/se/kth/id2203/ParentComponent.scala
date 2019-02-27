@@ -26,7 +26,7 @@ package se.kth.id2203;
 import se.kth.id2203.bootstrapping._
 import se.kth.id2203.kvstore.KVService;
 import se.kth.id2203.networking.NetAddress;
-import se.kth.id2203.failuredetector.EPFD;
+import se.kth.id2203.failuredetector._;
 import se.kth.edx.id2203.core.ExercisePrimitives;
 
 import se.kth.id2203.overlay._
@@ -60,6 +60,6 @@ class ParentComponent extends ComponentDefinition {
     connect(Routing)(overlay -> kv);
     connect[Network](net -> kv);
 
-    connect(EPFD)(epfd -> boot);
+    connect[EventuallyPerfectFailureDetector](epfd -> boot);
   }
 }

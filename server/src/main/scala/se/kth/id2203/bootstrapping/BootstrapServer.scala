@@ -25,6 +25,7 @@ package se.kth.id2203.bootstrapping;
 
 import java.util.UUID;
 import se.kth.id2203.networking._;
+import se.kth.id2203.failuredetector._;
 import se.sics.kompics.sl._;
 import se.sics.kompics.Start;
 import se.sics.kompics.network.Network;
@@ -47,7 +48,7 @@ class BootstrapServer extends ComponentDefinition {
   val boot = provides(Bootstrapping);
   val net = requires[Network];
   val timer = requires[Timer];
-  val epfd = requires[EPFD];
+  val epfd = requires[EventuallyPerfectFailureDetector];
   //******* Fields ******
   val self = cfg.getValue[NetAddress]("id2203.project.address");
   val bootThreshold = cfg.getValue[Int]("id2203.project.bootThreshold");
