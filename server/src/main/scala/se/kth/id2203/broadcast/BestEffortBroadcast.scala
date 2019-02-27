@@ -14,7 +14,7 @@ import scala.collection.immutable.Set
 //
 // import scala.collection.immutable.Set
 
-case class BEB_Deliver(source: Address, payload: KompicsEvent) extends KompicsEvent;
+case class BEB_Deliver(source: NetAddress, payload: KompicsEvent) extends KompicsEvent;
 case class BEB_Broadcast(payload: KompicsEvent) extends KompicsEvent;
 
 class BestEffortBroadcast extends Port {
